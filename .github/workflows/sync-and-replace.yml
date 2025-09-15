@@ -1,0 +1,62 @@
+name: Sync upstream & comment out Clerk branding
+
+on:
+  schedule:
+    - cron: "15 9 * * *"      # daily at 09:15 UTC; tweak as you like
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/clerk/clerk-ios.git
+          git fetch upstream --prune
+
+      - name: Detect upstream default branch
+        id: branch
+        run: |
+          DEFAULT_BRANCH=$(git remote show upstream | sed -n '/HEAD branch/s/.*: //p')
+          echo "branch=$DEFAULT_BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Sync fork branch to upstream
+        run: |
+          git checkout -B "${{ steps.branch.outputs.branch }}"
+          git reset --hard "upstream/${{ steps.branch.outputs.branch }}"
+
+      - name: Run replacement script
+        run: |
+          bash scripts/replace_branding.sh
+          if ! git diff --quiet; then
+            git add -A
+            git commit -m "Comment out Clerk branding views"
+          fi
+
+      # Optional build check — enable only if the package builds on Linux.
+      # - name: (Optional) Swift build
+      #   uses: swift-actions/setup-swift@v1
+      #   with:
+      #     swift-version: "5.9"
+      #   # If it compiles on Linux:
+      #   run: swift build -c release
+
+      - name: Push changes
+        run: |
+          # Force-push ensures your fork stays exactly: upstream + your edits
+          git push --force origin HEAD
