@@ -8,7 +8,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  workflows: write
 
 jobs:
   sync:
@@ -85,11 +84,30 @@ jobs:
           bash scripts/replace_branding.sh
 
           echo "Checking for changes..."
+          # Check if there are any changes at all
           if ! git diff --quiet; then
-            echo "Changes detected, committing..."
-            git add -A
-            git commit -m "Comment out Clerk branding views"
-            echo "Changes committed successfully."
+            echo "Changes detected, preparing selective commit..."
+            # Create a backup of our workflow file
+            cp .github/workflows/sync-and-replace.yml /tmp/our-workflow.yml
+            # Reset any workflow files that came from upstream
+            git checkout HEAD -- .github/workflows/ 2>/dev/null || true
+            # Restore our workflow file
+            mkdir -p .github/workflows
+            cp /tmp/our-workflow.yml .github/workflows/sync-and-replace.yml
+            # Add all other changes
+            git add .
+            # Remove workflow files from staging (except our own)
+            git reset HEAD .github/workflows/*.yml 2>/dev/null || true
+            git reset HEAD .github/workflows/*.yaml 2>/dev/null || true
+            # Add back our workflow file
+            git add .github/workflows/sync-and-replace.yml
+            # Commit if there are still changes
+            if ! git diff --cached --quiet; then
+              git commit -m "Comment out Clerk branding views"
+              echo "Changes committed successfully."
+            else
+              echo "No changes to commit after workflow cleanup."
+            fi
           else
             echo "No changes detected."
           fi
