@@ -132,7 +132,7 @@ struct SignInFactorOnePasswordView: View {
                 .simultaneousGesture(TapGesture())
                 .padding(.bottom, 32)
 
-                SecuredByClerkView()
+                //SecuredByClerkView()
             }
             .padding(16)
         }

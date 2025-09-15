@@ -190,7 +190,7 @@ public struct UserProfileView: View {
                     }
                     .background(theme.colors.muted)
 
-                    SecuredByClerkFooter()
+                    //SecuredByClerkFooter()
                 }
                 .animation(.default, value: user)
                 .navigationBarTitleDisplayMode(.inline)

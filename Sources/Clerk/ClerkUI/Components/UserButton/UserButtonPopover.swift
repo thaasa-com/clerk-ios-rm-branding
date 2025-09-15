@@ -99,7 +99,7 @@ struct UserButtonPopover: View {
                 }
             }
 
-            SecuredByClerkView()
+            //SecuredByClerkView()
                 .padding(16)
                 .frame(maxWidth: .infinity)
                 .background(theme.colors.muted)

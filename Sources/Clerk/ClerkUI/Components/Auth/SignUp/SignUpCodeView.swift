@@ -159,7 +159,7 @@ struct SignUpCodeView: View {
                     }
                 }
 
-                SecuredByClerkView()
+                //SecuredByClerkView()
             }
             .padding(16)
         }

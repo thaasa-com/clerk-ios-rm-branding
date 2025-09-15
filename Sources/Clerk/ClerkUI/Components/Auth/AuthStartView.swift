@@ -218,7 +218,7 @@ struct AuthStartView: View {
                 }
                 .padding(.bottom, 32)
 
-                SecuredByClerkView()
+                //SecuredByClerkView()
             }
             .padding(16)
         }

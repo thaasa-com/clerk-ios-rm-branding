@@ -159,7 +159,7 @@ struct SignUpCompleteProfileView: View {
                     .simultaneousGesture(TapGesture())
                 }
 
-                SecuredByClerkView()
+                //SecuredByClerkView()
             }
             .padding(16)
         }

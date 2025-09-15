@@ -127,7 +127,7 @@ struct UserProfileDetailView: View {
                     }
                     .background(theme.colors.muted)
 
-                    SecuredByClerkFooter()
+                    //SecuredByClerkFooter()
                 }
             }
         }

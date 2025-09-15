@@ -61,7 +61,7 @@ struct UserProfileSecurityView: View {
                 .background(theme.colors.muted)
             }
 
-            SecuredByClerkFooter()
+            //SecuredByClerkFooter()
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

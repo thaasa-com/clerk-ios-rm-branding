@@ -225,7 +225,7 @@ struct SignInFactorCodeView: View {
                     }
                 }
 
-                SecuredByClerkView()
+                //SecuredByClerkView()
                     .padding(.top, 32)
             }
             .padding(16)

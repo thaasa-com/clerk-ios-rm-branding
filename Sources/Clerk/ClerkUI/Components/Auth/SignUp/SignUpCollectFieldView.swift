@@ -164,7 +164,7 @@ struct SignUpCollectFieldView: View {
                     }
                 }
 
-                SecuredByClerkView()
+                //SecuredByClerkView()
             }
             .padding(16)
         }

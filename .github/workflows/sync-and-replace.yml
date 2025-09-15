@@ -42,10 +42,24 @@ jobs:
 
       - name: Run replacement script
         run: |
+          echo "Current directory: $(pwd)"
+          echo "Contents of scripts directory:"
+          ls -la scripts/
+
+          echo "Making sure script is executable..."
+          chmod +x scripts/replace_branding.sh
+
+          echo "Running replacement script..."
           bash scripts/replace_branding.sh
+
+          echo "Checking for changes..."
           if ! git diff --quiet; then
+            echo "Changes detected, committing..."
             git add -A
             git commit -m "Comment out Clerk branding views"
+            echo "Changes committed successfully."
+          else
+            echo "No changes detected."
           fi
 
       # Optional build check — enable only if the package builds on Linux.

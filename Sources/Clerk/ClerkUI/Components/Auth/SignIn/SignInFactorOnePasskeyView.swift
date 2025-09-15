@@ -96,7 +96,7 @@ struct SignInFactorOnePasskeyView: View {
                 }
                 .padding(.bottom, 32)
 
-                SecuredByClerkView()
+                //SecuredByClerkView()
             }
             .padding(16)
         }

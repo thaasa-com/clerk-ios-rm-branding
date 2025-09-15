@@ -34,7 +34,7 @@ struct SecuredByClerkFooter: View {
 
     var body: some View {
         if clerk.environment.displayConfig?.branded == true {
-            SecuredByClerkView()
+            //SecuredByClerkView()
                 .padding(16)
                 .frame(maxWidth: .infinity)
                 .background(theme.colors.muted)
@@ -54,7 +54,7 @@ struct SecuredByClerkFooter: View {
 }
 
 #Preview {
-    SecuredByClerkView()
+    //SecuredByClerkView()
 }
 
 #Preview {
@@ -65,7 +65,7 @@ struct SecuredByClerkFooter: View {
             theme.colors.muted
                 .containerRelativeFrame(.vertical)
         }
-        SecuredByClerkFooter()
+        //SecuredByClerkFooter()
     }
 }
 
