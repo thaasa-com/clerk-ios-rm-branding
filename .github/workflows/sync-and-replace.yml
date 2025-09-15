@@ -35,11 +35,14 @@ jobs:
           DEFAULT_BRANCH=$(git remote show upstream | sed -n '/HEAD branch/s/.*: //p')
           echo "branch=$DEFAULT_BRANCH" >> $GITHUB_OUTPUT
 
-      - name: Preserve replacement script
+      - name: Preserve files before sync
         run: |
-          echo "Preserving the replacement script before syncing..."
+          echo "Preserving replacement script and workflow before syncing..."
           mkdir -p /tmp/scripts_backup
           cp scripts/replace_branding.sh /tmp/scripts_backup/ 2>/dev/null || echo "Script not found in current state"
+          # Also backup our workflow file
+          mkdir -p /tmp/workflows_backup
+          cp .github/workflows/sync-and-replace.yml /tmp/workflows_backup/ 2>/dev/null || echo "Workflow file not found in current state"
 
       - name: Sync fork branch to upstream
         run: |
@@ -87,13 +90,16 @@ jobs:
           # Check if there are any changes at all
           if ! git diff --quiet; then
             echo "Changes detected, preparing selective commit..."
-            # Create a backup of our workflow file
-            cp .github/workflows/sync-and-replace.yml /tmp/our-workflow.yml
             # Reset any workflow files that came from upstream
             git checkout HEAD -- .github/workflows/ 2>/dev/null || true
-            # Restore our workflow file
+            # Restore our workflow file from backup
             mkdir -p .github/workflows
-            cp /tmp/our-workflow.yml .github/workflows/sync-and-replace.yml
+            if [ -f /tmp/workflows_backup/sync-and-replace.yml ]; then
+              cp /tmp/workflows_backup/sync-and-replace.yml .github/workflows/sync-and-replace.yml
+              echo "Workflow file restored from backup"
+            else
+              echo "Warning: Workflow backup not found, workflow file may be missing"
+            fi
             # Add all other changes
             git add .
             # Remove workflow files from staging (except our own)
