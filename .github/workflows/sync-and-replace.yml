@@ -35,14 +35,37 @@ jobs:
           DEFAULT_BRANCH=$(git remote show upstream | sed -n '/HEAD branch/s/.*: //p')
           echo "branch=$DEFAULT_BRANCH" >> $GITHUB_OUTPUT
 
+      - name: Preserve replacement script
+        run: |
+          echo "Preserving the replacement script before syncing..."
+          mkdir -p /tmp/scripts_backup
+          cp scripts/replace_branding.sh /tmp/scripts_backup/ 2>/dev/null || echo "Script not found in current state"
+
       - name: Sync fork branch to upstream
         run: |
           git checkout -B "${{ steps.branch.outputs.branch }}"
           git reset --hard "upstream/${{ steps.branch.outputs.branch }}"
 
-      - name: Run replacement script
+      - name: Restore and run replacement script
         run: |
           echo "Current directory: $(pwd)"
+          echo "Restoring replacement script..."
+
+          # Create scripts directory and restore the script
+          mkdir -p scripts
+          if [ -f /tmp/scripts_backup/replace_branding.sh ]; then
+            cp /tmp/scripts_backup/replace_branding.sh scripts/
+            echo "Script restored successfully"
+          else
+            echo "Script backup not found, checking if it exists in upstream..."
+            if [ -f scripts/replace_branding.sh ]; then
+              echo "Script found in upstream"
+            else
+              echo "Error: Replacement script not found!"
+              exit 1
+            fi
+          fi
+
           echo "Contents of scripts directory:"
           ls -la scripts/
 
