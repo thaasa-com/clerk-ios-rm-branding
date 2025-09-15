@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  workflows: write
 
 jobs:
   sync:
@@ -45,6 +46,14 @@ jobs:
         run: |
           git checkout -B "${{ steps.branch.outputs.branch }}"
           git reset --hard "upstream/${{ steps.branch.outputs.branch }}"
+
+      - name: Remove upstream workflow files
+        run: |
+          echo "Removing upstream workflow files to prevent conflicts..."
+          # Remove any workflow files that came from upstream (except our own)
+          find .github/workflows -name "*.yml" -o -name "*.yaml" | grep -v "sync-and-replace" | xargs rm -f || true
+          # Also remove any CI-related files that might conflict
+          rm -f .github/workflows/ci.yml .github/workflows/CI.yml 2>/dev/null || true
 
       - name: Restore and run replacement script
         run: |
